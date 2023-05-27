@@ -61,7 +61,7 @@ public class GameCover extends JFrame {
         
         setLayout(new BorderLayout());
 
-        // 在gamePanel中添加游戏区域和其他游戏元素的组件
+        // 在contentPane中添加游戏区域和其他游戏元素的组件
         setContentPane(background);
         account.setBounds(1200,30,250,30);
         add(account);
@@ -126,6 +126,7 @@ public class GameCover extends JFrame {
                 if (resultSet.next()) {
                     // 用户名和密码匹配，进行游戏跳转等操作
                     JOptionPane.showMessageDialog(null, "successful", "Login successful", JOptionPane.INFORMATION_MESSAGE);
+
                 } else {
                     // 用户名和密码不匹配，弹出警告框
                     JOptionPane.showMessageDialog(null, "Invalid username or password", "Login Failed", JOptionPane.WARNING_MESSAGE);
