@@ -14,6 +14,7 @@ public class ImageInit {
     public static String imagePath = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/cat";
     //init
     public static void init(){
+        
         for(int i = 1; i < 10; i++){
             try {
                 String image = imagePath + i + ".png";
@@ -21,8 +22,6 @@ public class ImageInit {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            
-
         }
     }
 

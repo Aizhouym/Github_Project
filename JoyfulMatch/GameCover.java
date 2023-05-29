@@ -31,12 +31,12 @@ public class GameCover extends JFrame {
     private JButton logIn;
 
     public GameCover() {
-        initializeComponents();
+        initalizeComponents();
         createGUI();
         setLinstener();
     }
     //initalize
-    private void initializeComponents() {
+    private void initalizeComponents() {
         image1 = new ImageIcon("E:/Github_Project/JoyfulMatch/Utilities/background4.jpg");
         background = new JLabel(image1);
         image2 = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/logIn.png");
@@ -107,6 +107,7 @@ public class GameCover extends JFrame {
                         insertStatement.executeUpdate();
                         // 插入成功的处理逻辑
                         JOptionPane.showMessageDialog(null, "Registration successful", "Registration", JOptionPane.INFORMATION_MESSAGE);
+                        // SwingUtilities.invokeLater(GameWindow::new);
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
@@ -126,6 +127,8 @@ public class GameCover extends JFrame {
                 if (resultSet.next()) {
                     // 用户名和密码匹配，进行游戏跳转等操作
                     JOptionPane.showMessageDialog(null, "successful", "Login successful", JOptionPane.INFORMATION_MESSAGE);
+                    
+                    // 加一个弹窗，显示游戏界面
 
                 } else {
                     // 用户名和密码不匹配，弹出警告框
@@ -140,5 +143,6 @@ public class GameCover extends JFrame {
         });
 
     }
+    
 }
 
