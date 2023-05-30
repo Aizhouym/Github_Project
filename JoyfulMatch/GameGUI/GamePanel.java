@@ -22,6 +22,7 @@ public class GamePanel extends JPanel {
         // 随机生成图像矩阵
         Random random = new Random();
         imageMatrix = new int[7][10];
+        blockMatrix = new Block[7][10];
         for (int row = 0; row < imageMatrix.length; row++) {
             for (int col = 0; col < imageMatrix[0].length; col++) {
                 int num = random.nextInt(9);
