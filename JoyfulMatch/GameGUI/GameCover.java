@@ -21,6 +21,7 @@ public class GameCover extends JFrame {
     private JPasswordField password;
     private JButton signUp;
     private JButton logIn;
+    private ImageIcon icon;
 
 
     public GameCover() {
@@ -40,12 +41,14 @@ public class GameCover extends JFrame {
         worning = new JLabel(image4);
         account = new JTextField(10);
         password = new JPasswordField(10);
+        icon = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Icon2.png");
 
     }
     
     private void createGUI() {
         // 设置窗体大小并显示
         setTitle("喵了个喵");
+        setIconImage(icon.getImage());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1850, 1050); //img 大小为：1800x1000
         setVisible(true);

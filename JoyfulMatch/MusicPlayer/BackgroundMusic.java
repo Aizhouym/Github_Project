@@ -18,7 +18,7 @@ public class BackgroundMusic{
             
             player = new Player(bis);
             player.play();
-            notifyPlaybackEnd();
+            // notifyPlaybackEnd();
         } catch (FileNotFoundException | JavaLayerException e) {
             e.printStackTrace();
         }

@@ -13,6 +13,7 @@ import java.util.Random;
 public class GameWindow extends JFrame {
     private HashMap<String, ImageIcon> imageMap;
     private ImageIcon image1, image2, image3, image4, image5, image6, image7, image8, image9; 
+    private ImageIcon icon;
     private JPanel gamePanel;
     private JMenuBar menu;
     private JMenu gameMenu, rankMenu, musicMenu;
@@ -20,7 +21,9 @@ public class GameWindow extends JFrame {
     private String music1String, music2String, music3String;
     private BackgroundMusic musicPlayer;
     MusicThread musicThread;
+
     String[][] gameGrid;
+
 
     private void  initalizeComponents(){
 
@@ -33,6 +36,7 @@ public class GameWindow extends JFrame {
         image7 = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/cat7.png");
         image8 = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/cat8.png");
         image9 = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/cat9.png");
+        icon = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/icon2.png");
         imageMap = new HashMap<>();
         imageMap.put("image1", image1);
         imageMap.put("image2", image2);
@@ -175,21 +179,34 @@ public class GameWindow extends JFrame {
     
     private void createGUI(){
         SwingUtilities.invokeLater(() -> {
+            //启动背景音乐线程
+            musicThread.start();
+            
             // 设置窗口属性
             setTitle("喵了个喵");
+            setIconImage(icon.getImage());
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setBounds(450, 250, 600, 600);
             setSize(600, 600);
             setVisible(true);
+
+            
             // 设置游戏菜单的字体
             Font menuFont = new Font("宋体", Font.BOLD, 15);
             Font menuFont2 = new Font("Arial", Font.BOLD, 15);
-
             gameMenu.setFont(menuFont);
             rankMenu.setFont(menuFont);
             musicMenu.setFont(menuFont);
             startItem.setFont(menuFont);
+            startItem.addActionListener(e -> {
+
+            }); //计时器开始计时
+
             exitItem.setFont(menuFont);
+            exitItem.addActionListener(e -> {
+                System.exit(0); //设置退出
+            });
+            //音乐切换
             music1.setFont(menuFont2);
             music2.setFont(menuFont2);
             music3.setFont(menuFont2);
@@ -215,7 +232,8 @@ public class GameWindow extends JFrame {
                 musicThread3.setBackgroundMusic(musicPlayer);
                 musicThread3.setMusic(music3String);
                 musicThread3.start();
-            });            
+            });
+
             gameMenu.add(startItem);
             gameMenu.add(exitItem);
             musicMenu.add(music1);
@@ -231,9 +249,6 @@ public class GameWindow extends JFrame {
             
             // 将游戏面板添加到窗口中
             add(gamePanel);
-            
-            //启动背景音乐线程
-            musicThread.start();
         });        
     }    
 
@@ -242,6 +257,10 @@ public class GameWindow extends JFrame {
         initalizeComponents();
         createGUI();
         
+    }
+
+    public static void main(String[] args) {
+        new GameWindow();
     }
 
 }

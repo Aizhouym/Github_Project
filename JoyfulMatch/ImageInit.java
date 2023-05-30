@@ -1,27 +1,20 @@
 package JoyfulMatch;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.awt.Image;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
-import javafx.scene.image.ImageView;
+import javax.swing.ImageIcon;
 
 public class ImageInit {
-    public static ArrayList<BufferedImage> imageList = new ArrayList<BufferedImage>();
+    
+    public static ArrayList<Image> imageList = new ArrayList<Image>();
     //imagePath
     public static String imagePath = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/cat";
     //init
     public static void init(){
         
         for(int i = 1; i < 10; i++){
-            try {
-                String image = imagePath + i + ".png";
-                imageList.add(ImageIO.read(ImageView.class.getResource(image)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            String image = imagePath + i + ".png";
+            ImageIcon imageIcon = new ImageIcon(image);
+            imageList.add(imageIcon.getImage());
         }
     }
 
