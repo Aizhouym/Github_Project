@@ -1,9 +1,14 @@
 package JoyfulMatch;
 
 import javax.swing.*;
+
+import javafx.application.Platform;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -28,8 +33,7 @@ public class GameWindow extends JFrame {
     private JMenuItem music1;
     private JMenuItem music2;
     private JMenuItem music3;
-
-
+    private String musicname;
     String[][] gameGrid;
 
     private void  initalizeComponents(){
@@ -64,6 +68,7 @@ public class GameWindow extends JFrame {
         music1 = new JMenuItem("<1.Shape Of You>");
         music2 = new JMenuItem("<2.Closer>");
         music3 = new JMenuItem("<3.Die for you>");
+        musicname = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Shape of You.mp3";
 
     }
 
@@ -174,44 +179,81 @@ public class GameWindow extends JFrame {
         });
         
     }
+    private void playBackgroundMusic(String musicFile) {
+        try {
+            Media sound = new Media(new File(musicFile).toURI().toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            mediaPlayer.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+    }
+
+    private void startBackgroundMusicThread() {
+        // 在 JavaFX 线程中播放背景音乐
+        Platform.runLater(() -> {
+            Media sound = new Media(getClass().getResource(musicname).toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(sound);
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            mediaPlayer.play();
+        });
+    }
+
     
+
     private void createGUI(){
+        SwingUtilities.invokeLater(() -> {
+            // 设置窗口属性
+            setTitle("喵了个喵");
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setBounds(450, 250, 600, 600);
+            setSize(600, 600);
+            setVisible(true);
+            // 设置游戏菜单的字体
+            Font menuFont = new Font("宋体", Font.BOLD, 15);
+            Font menuFont2 = new Font("Arial", Font.BOLD, 15);
 
-        // 设置窗口属性
-        setTitle("喵了个喵");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(450, 250, 600, 600);
-        setSize(600, 600);
-        setVisible(true);
-        // 设置游戏菜单的字体
-        Font menuFont = new Font("宋体", Font.BOLD, 15);
-        Font menuFont2 = new Font("Arial", Font.BOLD, 15);
+            gameMenu.setFont(menuFont);
+            rankMenu.setFont(menuFont);
+            musicMenu.setFont(menuFont);
+            startItem.setFont(menuFont);
+            exitItem.setFont(menuFont);
+            music1.setFont(menuFont2);
+            music2.setFont(menuFont2);
+            music3.setFont(menuFont2);
+            music1.addActionListener(e -> {
+                playBackgroundMusic("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Shape of You.mp3");
+            });
+            
+            music2.addActionListener(e ->{
+                playBackgroundMusic("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Closer.mp3");
+            });
+            
+            music3.addActionListener(e -> {
+                playBackgroundMusic("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Die for You.mp3");
+            });        
+            gameMenu.add(startItem);
+            gameMenu.add(exitItem);
+            musicMenu.add(music1);
+            musicMenu.add(music2);
+            musicMenu.add(music3);
+            menu.add(gameMenu);
+            menu.add(rankMenu);
+            menu.add(musicMenu);
+            setJMenuBar(menu);
+            // 将图像绘制到面板中
+            drawGameGrid(gameGrid);
+            // 将游戏面板添加到窗口中
+            add(gamePanel);
 
-        gameMenu.setFont(menuFont);
-        rankMenu.setFont(menuFont);
-        musicMenu.setFont(menuFont);
-        startItem.setFont(menuFont);
-        exitItem.setFont(menuFont);
-        music1.setFont(menuFont2);
-        music2.setFont(menuFont2);
-        music3.setFont(menuFont2);
-        gameMenu.add(startItem);
-        gameMenu.add(exitItem);
-        musicMenu.add(music1);
-        musicMenu.add(music2);
-        musicMenu.add(music3);
-        menu.add(gameMenu);
-        menu.add(rankMenu);
-        menu.add(musicMenu);
-        setJMenuBar(menu);
-        // 将图像绘制到面板中
-        drawGameGrid(gameGrid);
-        // 将游戏面板添加到窗口中
-        // 添加鼠标点击事件监听器到每个JLabel
-       // 添加鼠标点击事件监听器到每个JLabel
-        add(gamePanel);
-
-
+            // 启动 JavaFX 线程并播放背景音乐
+            startBackgroundMusicThread();
+        });
+        
+        
+        
     }    
 
     public GameWindow() {
@@ -223,6 +265,5 @@ public class GameWindow extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(GameWindow::new);
-
     }
 }
