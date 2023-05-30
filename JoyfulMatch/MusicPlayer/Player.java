@@ -1,4 +1,4 @@
-package JoyfulMatch;
+package JoyfulMatch.MusicPlayer;
 
 import java.io.File;
 import javafx.application.Application;
@@ -6,10 +6,17 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
+//使用javaFx进行音乐播放
 public class Player extends Application {
-    String musicFile = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Die For You.mp3";
+    String musicFile;
+
+    public void setMusicFile(String musicPath){
+        this.musicFile = musicPath;
+    }
 
     private MediaPlayer mediaPlayer;
+
+
     @Override
     public void start(Stage primaryStage) {
         
@@ -24,10 +31,6 @@ public class Player extends Application {
     @Override
     public void stop() {
         mediaPlayer.stop();
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 
     public void launchPlayer() {

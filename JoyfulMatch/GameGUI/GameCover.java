@@ -1,13 +1,6 @@
 package JoyfulMatch.GameGUI;
 
-import javax.swing.JFrame;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class GameCover extends JFrame {
-    // private JButton startButton;
     private JLabel background;
     private JLabel worning;
     private ImageIcon image1;
@@ -29,6 +21,7 @@ public class GameCover extends JFrame {
     private JPasswordField password;
     private JButton signUp;
     private JButton logIn;
+
 
     public GameCover() {
         initalizeComponents();
@@ -47,7 +40,6 @@ public class GameCover extends JFrame {
         worning = new JLabel(image4);
         account = new JTextField(10);
         password = new JPasswordField(10);
-
 
     }
     
@@ -127,9 +119,9 @@ public class GameCover extends JFrame {
                 if (resultSet.next()) {
                     // 用户名和密码匹配，进行游戏跳转等操作
                     JOptionPane.showMessageDialog(null, "successful", "Login successful", JOptionPane.INFORMATION_MESSAGE);
-                    
-                    // 加一个弹窗，显示游戏界面
-
+                    dispose(); //关闭当前窗口
+                    GameWindow gameWindow = new GameWindow();
+                    gameWindow.setVisible(true);
                 } else {
                     // 用户名和密码不匹配，弹出警告框
                     JOptionPane.showMessageDialog(null, "Invalid username or password", "Login Failed", JOptionPane.WARNING_MESSAGE);

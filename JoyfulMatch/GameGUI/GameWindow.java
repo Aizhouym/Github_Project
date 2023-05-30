@@ -2,13 +2,12 @@ package JoyfulMatch.GameGUI;
 
 import javax.swing.*;
 
-import javafx.application.Platform;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import JoyfulMatch.MusicPlayer.BackgroundMusic;
+import JoyfulMatch.MusicPlayer.MusicThread;
+
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -33,7 +32,11 @@ public class GameWindow extends JFrame {
     private JMenuItem music1;
     private JMenuItem music2;
     private JMenuItem music3;
-    private String musicname;
+    private String music1String;
+    private String music2String;
+    private String music3String;
+    private BackgroundMusic musicPlayer;
+    MusicThread musicThread;
     String[][] gameGrid;
 
     private void  initalizeComponents(){
@@ -68,8 +71,15 @@ public class GameWindow extends JFrame {
         music1 = new JMenuItem("<1.Shape Of You>");
         music2 = new JMenuItem("<2.Closer>");
         music3 = new JMenuItem("<3.Die for you>");
-        musicname = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Shape of You.mp3";
 
+        music1String = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Shape of You.mp3";
+        music2String = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Closer.mp3";
+        music3String = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Die for You.mp3";
+        
+
+        musicPlayer = new BackgroundMusic();
+        musicThread = new MusicThread();
+        musicThread.setBackgroundMusic(musicPlayer);
     }
 
     private String[][] generateGameGrid() {
@@ -179,30 +189,7 @@ public class GameWindow extends JFrame {
         });
         
     }
-    private void playBackgroundMusic(String musicFile) {
-        try {
-            Media sound = new Media(new File(musicFile).toURI().toString());
-            MediaPlayer mediaPlayer = new MediaPlayer(sound);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            mediaPlayer.play();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-    }
-
-    private void startBackgroundMusicThread() {
-        // 在 JavaFX 线程中播放背景音乐
-        Platform.runLater(() -> {
-            Media sound = new Media(getClass().getResource(musicname).toString());
-            MediaPlayer mediaPlayer = new MediaPlayer(sound);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            mediaPlayer.play();
-        });
-    }
-
     
-
     private void createGUI(){
         SwingUtilities.invokeLater(() -> {
             // 设置窗口属性
@@ -224,16 +211,28 @@ public class GameWindow extends JFrame {
             music2.setFont(menuFont2);
             music3.setFont(menuFont2);
             music1.addActionListener(e -> {
-                playBackgroundMusic("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Shape of You.mp3");
+                musicPlayer.stop();
+                MusicThread musicThread1 = new MusicThread();
+                musicThread1.setBackgroundMusic(musicPlayer);
+                musicThread1.setMusic(music1String);
+                musicThread1.start();
             });
             
-            music2.addActionListener(e ->{
-                playBackgroundMusic("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Closer.mp3");
+            music2.addActionListener(e -> {
+                musicPlayer.stop();
+                MusicThread musicThread2 = new MusicThread();
+                musicThread2.setBackgroundMusic(musicPlayer);
+                musicThread2.setMusic(music2String);
+                musicThread2.start();
             });
             
             music3.addActionListener(e -> {
-                playBackgroundMusic("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/Die for You.mp3");
-            });        
+                musicPlayer.stop();
+                MusicThread musicThread3 = new MusicThread();
+                musicThread3.setBackgroundMusic(musicPlayer);
+                musicThread3.setMusic(music3String);
+                musicThread3.start();
+            });            
             gameMenu.add(startItem);
             gameMenu.add(exitItem);
             musicMenu.add(music1);
@@ -243,17 +242,16 @@ public class GameWindow extends JFrame {
             menu.add(rankMenu);
             menu.add(musicMenu);
             setJMenuBar(menu);
+            
             // 将图像绘制到面板中
             drawGameGrid(gameGrid);
+            
             // 将游戏面板添加到窗口中
             add(gamePanel);
-
-            // 启动 JavaFX 线程并播放背景音乐
-            startBackgroundMusicThread();
-        });
-        
-        
-        
+            
+            //启动背景音乐线程
+            musicThread.start();
+        });        
     }    
 
     public GameWindow() {
@@ -263,7 +261,4 @@ public class GameWindow extends JFrame {
         
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(GameWindow::new);
-    }
 }
