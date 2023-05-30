@@ -1,6 +1,8 @@
 package JoyfulMatch.GameGUI;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Random;
 import javax.swing.*;
 import JoyfulMatch.Block;
@@ -9,10 +11,14 @@ import JoyfulMatch.ImageInit;
 public class GamePanel extends JPanel {
     private int[][] imageMatrix;
     private Block[][] blockMatrix;
+    private Block selectedBlock;
+
     private ImageInit imageInit;
     private Image background;
     private Font headerFont;
     private long startTime;
+    private int score;
+
 
     private void init() {
         imageInit = new ImageInit();
@@ -23,10 +29,12 @@ public class GamePanel extends JPanel {
         Random random = new Random();
         imageMatrix = new int[7][10];
         blockMatrix = new Block[7][10];
+
         for (int row = 0; row < imageMatrix.length; row++) {
             for (int col = 0; col < imageMatrix[0].length; col++) {
                 int num = random.nextInt(9);
                 imageMatrix[row][col] = num;
+                blockMatrix[row][col] = new Block(row, col, num, this);
             }
         }
 
@@ -41,7 +49,11 @@ public class GamePanel extends JPanel {
         });
         timer.start();
 
+        //设置得分
+        score = 0;
     }
+
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -71,11 +83,14 @@ public class GamePanel extends JPanel {
         // 绘制图像
         for (int row = 0; row < imageMatrix.length; row++) {
             for (int col = 0; col < imageMatrix[0].length; col++) {
-                int index = imageMatrix[row][col];
-                Image image = ImageInit.imageList.get(index);
-                int x = startX + col * (imageWidth + gap);
-                int y = startY + row * (imageHeight + gap);
-                g.drawImage(image, x, y, this);
+                // int index = imageMatrix[row][col];
+                // Image image = ImageInit.imageList.get(index);
+                // int x = startX + col * (imageWidth + gap);
+                // int y = startY + row * (imageHeight + gap);
+                // g.drawImage(image, x, y, this);
+                Block block = blockMatrix[row][col];
+                block.draw(g);
+
             }
         }
 
@@ -85,16 +100,86 @@ public class GamePanel extends JPanel {
         long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - startTime;
         String timeText = "时间：" + elapsedTime / 1000 + "秒";
-        String scoreText = "得分: ";
+        String scoreText = "得分: "+ score;
         int textHeight = g.getFontMetrics().getHeight();
         g.drawString(timeText, 300, startY - textHeight);
         g.drawString(scoreText, 700, startY - textHeight);
 
-
     }
+
+    public void setMouseListener(){
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();
+
+                // 遍历所有块，检查是否点击到了某个块
+                for (int row = 0; row < blockMatrix.length; row++) {
+                    for (int col = 0; col < blockMatrix[0].length; col++) {
+                        Block block = blockMatrix[row][col];
+                        if (block.containsPoint(mouseX, mouseY)) {
+                            // 点击到了块，将其设置为选中块
+                            selectedBlock = block;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                int mouseX = e.getX();
+                int mouseY = e.getY();
+
+                if (selectedBlock != null) {
+                    // 遍历所有块，检查是否释放到了某个块
+                    for (int row = 0; row < blockMatrix.length; row++) {
+                        for (int col = 0; col < blockMatrix[0].length; col++) {
+                            Block block = blockMatrix[row][col];
+                            if (block != selectedBlock && block.containsPoint(mouseX, mouseY)) {
+                                // 释放到了另一个块，进行交换
+                                swapBlocks(selectedBlock, block);
+                                break;
+                            }
+                        }
+                    }
+                    selectedBlock = null;  // 重置选中块
+                }
+            }
+        });
+    }
+
+    private void swapBlocks(Block block1, Block block2) {
+        int row1 = block1.getRow();
+        int col1 = block1.getCol();
+        int row2 = block2.getRow();
+        int col2 = block2.getCol();
+
+        // 交换块在图像矩阵中的位置
+        int temp = imageMatrix[row1][col1];
+        imageMatrix[row1][col1] = imageMatrix[row2][col2];
+        imageMatrix[row2][col2] = temp;
+
+        // 交换块数组中的位置
+        blockMatrix[row1][col1] = block2;
+        blockMatrix[row2][col2] = block1;
+
+        // 更新块的图像编号
+        block1.setImageNumber(imageMatrix[row1][col1]);
+        block2.setImageNumber(imageMatrix[row2][col2]);
+
+
+        // 重绘面板
+        repaint();
+    }
+    
+
+
 
     public GamePanel() {
         init();
+        setMouseListener();
     }
 
     public static void main(String[] args) {
