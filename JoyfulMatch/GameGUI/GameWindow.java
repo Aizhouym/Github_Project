@@ -1,4 +1,4 @@
-package JoyfulMatch;
+package JoyfulMatch.GameGUI;
 
 import javax.swing.*;
 
