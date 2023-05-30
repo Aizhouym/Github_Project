@@ -4,7 +4,6 @@ import javax.swing.*;
 
 import JoyfulMatch.MusicPlayer.BackgroundMusic;
 import JoyfulMatch.MusicPlayer.MusicThread;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -13,28 +12,12 @@ import java.util.Random;
 
 public class GameWindow extends JFrame {
     private HashMap<String, ImageIcon> imageMap;
-    private ImageIcon image1;
-    private ImageIcon image2;
-    private ImageIcon image3;
-    private ImageIcon image4;
-    private ImageIcon image5;
-    private ImageIcon image6;
-    private ImageIcon image7;
-    private ImageIcon image8;
-    private ImageIcon image9; 
+    private ImageIcon image1, image2, image3, image4, image5, image6, image7, image8, image9; 
     private JPanel gamePanel;
     private JMenuBar menu;
-    private JMenu gameMenu;
-    private JMenu rankMenu;
-    private JMenu musicMenu;
-    private JMenuItem startItem;
-    private JMenuItem exitItem;
-    private JMenuItem music1;
-    private JMenuItem music2;
-    private JMenuItem music3;
-    private String music1String;
-    private String music2String;
-    private String music3String;
+    private JMenu gameMenu, rankMenu, musicMenu;
+    private JMenuItem startItem, exitItem, music1, music2, music3;
+    private String music1String, music2String, music3String;
     private BackgroundMusic musicPlayer;
     MusicThread musicThread;
     String[][] gameGrid;

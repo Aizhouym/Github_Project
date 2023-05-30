@@ -16,7 +16,19 @@ public class MusicThread extends Thread{
 
     @Override
     public void run() {
-        backgroundMusic.play(defaultMusic);
+        // backgroundMusic.play(defaultMusic);
+        try {
+            while (true) {
+                backgroundMusic.play(defaultMusic);
+                // 等待音乐播放结束
+                synchronized (backgroundMusic) {
+                    backgroundMusic.wait();
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }//循环播放音乐
     }
+
 
 }
