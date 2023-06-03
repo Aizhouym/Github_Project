@@ -123,6 +123,7 @@ public class GameCover extends JFrame {
                     // 用户名和密码匹配，进行游戏跳转等操作
                     JOptionPane.showMessageDialog(null, "successful", "Login successful", JOptionPane.INFORMATION_MESSAGE);
                     dispose(); //关闭当前窗口
+
                     GameWindow gameWindow = new GameWindow();
                     gameWindow.setVisible(true);
                 } else {
@@ -133,7 +134,6 @@ public class GameCover extends JFrame {
                 ex.printStackTrace();
                 // 数据库操作失败的处理逻辑
             }
-
             }
         });
 
