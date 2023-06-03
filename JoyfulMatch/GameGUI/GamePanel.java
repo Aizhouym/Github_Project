@@ -5,8 +5,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Random;
 import javax.swing.*;
-import JoyfulMatch.Block;
-import JoyfulMatch.ImageInit;
+
+import JoyfulMatch.common.Block;
+import JoyfulMatch.common.ImageInit;
+
 
 public class GamePanel extends JPanel {
     private int[][] imageMatrix;
