@@ -110,50 +110,49 @@ public class GamePanel extends JPanel {
     }
 
     public void setMouseListener(){
+            //     addMouseListener(new MouseAdapter() {
+    //         @Override
+    //         public void mousePressed(MouseEvent e) {
+    //             int mouseX = e.getX();
+    //             int mouseY = e.getY();
 
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int mouseX = e.getX();
-                int mouseY = e.getY();
+    //             // 遍历所有块，检查是否点击到了某个块
+    //             for (int row = 0; row < blockMatrix.length; row++) {
+    //                 for (int col = 0; col < blockMatrix[0].length; col++) {
+    //                     Block block = blockMatrix[row][col];
+    //                     if (block.containsPoint(mouseX, mouseY)) {
+    //                         // 点击到了块，将其设置为选中块
+    //                         block.setSelected(true);
+    //                         selectedBlock = block;
+    //                         break;
+    //                     }
+    //                 }
+    //             }
+    //         }
 
-                // 遍历所有块，检查是否点击到了某个块
-                for (int row = 0; row < blockMatrix.length; row++) {
-                    for (int col = 0; col < blockMatrix[0].length; col++) {
-                        Block block = blockMatrix[row][col];
-                        if (block.containsPoint(mouseX, mouseY)) {
-                            // 点击到了块，将其设置为选中块
-                            block.setSelected(true);
-                            selectedBlock = block;
-                            break;
-                        }
-                    }
-                }
-            }
+    //         @Override
+    //         public void mouseReleased(MouseEvent e) {
+    //             int mouseX = e.getX();
+    //             int mouseY = e.getY();
 
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                int mouseX = e.getX();
-                int mouseY = e.getY();
-
-                if (selectedBlock != null) {
-                    // 遍历所有块，检查是否释放到了某个块
-                    for (int row = 0; row < blockMatrix.length; row++) {
-                        for (int col = 0; col < blockMatrix[0].length; col++) {
-                            Block block = blockMatrix[row][col];
-                            if (block != selectedBlock && block.containsPoint(mouseX, mouseY)) {
-                                // 释放到了另一个块，进行交换
-                                swapBlocks(selectedBlock, block);
-                                break;
-                            }
-                        }
-                    }
-                    selectedBlock.setSelected(false);
-                    selectedBlock = null;  // 重置选中块
+    //             if (selectedBlock != null) {
+    //                 // 遍历所有块，检查是否释放到了某个块
+    //                 for (int row = 0; row < blockMatrix.length; row++) {
+    //                     for (int col = 0; col < blockMatrix[0].length; col++) {
+    //                         Block block = blockMatrix[row][col];
+    //                         if (block != selectedBlock && block.containsPoint(mouseX, mouseY)) {
+    //                             // 释放到了另一个块，进行交换
+    //                             swapBlocks(selectedBlock, block);
+    //                             break;
+    //                         }
+    //                     }
+    //                 }
+    //                 selectedBlock.setSelected(false);
+    //                 selectedBlock = null;  // 重置选中块
                 
-                }
-            }
-        });
+    //             }
+    //         }
+    //     });
     }
 
     private void swapBlocks(Block block1, Block block2) {
