@@ -1,31 +1,21 @@
 package JoyfulMatch.common;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
+import java.awt.Image;
 import java.util.ArrayList;
-import java.util.List;
-import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class ImageInit {
     
-    public static List<BufferedImage> itemImageList = new ArrayList<BufferedImage>();
-
-    //路径
-    public static String ImagePath = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/";
-    
-    //将图片初始化
+    public static ArrayList<Image> imageList = new ArrayList<Image>();
+    //imagePath
+    public static String imagePath = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/title_";
+    //init
     public static void init(){
-    	String path = "";
-        //图片初始化
-        for(int i = 0; i < 10; i++){
-            try {
-            	path = ImagePath + "tile_" +  i + ".png";
-            	itemImageList.add(ImageIO.read(ImageInit.class.getResource(path)));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         
+        for(int i = 0; i < 9; i++){
+            String image = imagePath + i + ".png";
+            ImageIcon imageIcon = new ImageIcon(image);
+            imageList.add(imageIcon.getImage());
+        }
     }
 
 }   
