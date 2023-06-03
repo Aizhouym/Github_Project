@@ -9,8 +9,10 @@ import javax.imageio.ImageIO;
 public class ImageInit {
     
     public static List<BufferedImage> itemImageList = new ArrayList<BufferedImage>();
+
     //路径
-    public static String ImagePath = "/Utilities/";
+    public static String ImagePath = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/";
+    
     //将图片初始化
     public static void init(){
     	String path = "";
