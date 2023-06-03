@@ -77,7 +77,7 @@ public class GamePanel extends JPanel {
         int startY = (panelHeight - matrixHeight) / 2;
 
         // 绘制蓝色矩形框
-        g.setColor(Color.CYAN);
+        g.setColor(Color.WHITE);
         g.fillRect(startX - gap, startY - gap, matrixWidth + 2 * gap, matrixHeight + 2 * gap);
 
         // 绘制图像
@@ -101,13 +101,14 @@ public class GamePanel extends JPanel {
         long elapsedTime = currentTime - startTime;
         String timeText = "时间：" + elapsedTime / 1000 + "秒";
         String scoreText = "得分: "+ score;
-        int textHeight = g.getFontMetrics().getHeight();
-        g.drawString(timeText, 300, startY - textHeight);
-        g.drawString(scoreText, 700, startY - textHeight);
+        // int textHeight = g.getFontMetrics().getHeight();
+        g.drawString(timeText, 300, startY-8);
+        g.drawString(scoreText, 700, startY-8);
 
     }
 
     public void setMouseListener(){
+
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -120,6 +121,7 @@ public class GamePanel extends JPanel {
                         Block block = blockMatrix[row][col];
                         if (block.containsPoint(mouseX, mouseY)) {
                             // 点击到了块，将其设置为选中块
+                            block.setSelected(true);
                             selectedBlock = block;
                             break;
                         }
@@ -144,7 +146,9 @@ public class GamePanel extends JPanel {
                             }
                         }
                     }
+                    selectedBlock.setSelected(false);
                     selectedBlock = null;  // 重置选中块
+                
                 }
             }
         });
@@ -182,15 +186,15 @@ public class GamePanel extends JPanel {
         setMouseListener();
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1250, 1000);
+    // public static void main(String[] args) {
+    //     JFrame frame = new JFrame();
+    //     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    //     frame.setSize(1250, 1000);
         
-        GamePanel  gameFrame = new GamePanel();
-        frame.add(gameFrame);
-        frame.setVisible(true);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-    }
+    //     GamePanel  gameFrame = new GamePanel();
+    //     frame.add(gameFrame);
+    //     frame.setVisible(true);
+    //     frame.setLocationRelativeTo(null);
+    //     frame.setResizable(false);
+    // }
 }

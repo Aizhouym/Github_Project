@@ -1,6 +1,7 @@
 package  JoyfulMatch;
 
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -11,13 +12,13 @@ public class Block{
     private int row;
     private int col;
     private int startX = 28;
-    private int startY = 69;
+    private int startY = 60;
     private int imageNumber;
     private GamePanel gamePanel;
     private int width = 115;
     private int height = 115;
     private int gap = 3;
-
+    private boolean selected = false; //设置是否被选中
     
     public Block(int row, int col, int imageNumber, GamePanel jpanel){
         this.row = row;
@@ -31,6 +32,11 @@ public class Block{
         int x = startX + col * (width + gap);
         int y = startY + row * (height + gap);
         g.drawImage(image, x, y, gamePanel); 
+
+        if (selected) {
+            g.setColor(Color.RED);
+            g.drawRect(x, y, width, height);
+        }
     } 
     
     public int getRow(){
@@ -44,6 +50,15 @@ public class Block{
     public void setImageNumber(int imageNumber) {
         this.imageNumber = imageNumber;
     }    
+
+    public boolean isSelected(){
+        return selected;
+    }
+
+    public void setSelected(boolean selected){
+        this.selected = selected;
+    }
+
 
     public boolean containsPoint(int x, int y) {
         int startX = this.startX + this.col * (width + gap);
