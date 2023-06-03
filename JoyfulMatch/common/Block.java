@@ -13,6 +13,10 @@ public class Block{
     private int col;
     private int startX = 28;
     private int startY = 60;
+    private int dx = 0;
+    private int dy = 0;
+    private int odx = 0;
+    private int ody = 0;
     private int imageNumber;
     private GamePanel gamePanel;
     private int width = 115;
