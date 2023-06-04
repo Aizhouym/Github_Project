@@ -11,17 +11,13 @@ import JoyfulMatch.GameGUI.GamePanel;
 public class Block{
     private int row;
     private int col;
-    private int startX = 28;
-    private int startY = 60;
-    private int dx = 0;
-    private int dy = 0;
-    private int odx = 0;
-    private int ody = 0;
+    public static int startX = 28;
+    public static int startY = 60;
     private int imageNumber;
     private GamePanel gamePanel;
-    private int width = 115;
-    private int height = 115;
-    private int gap = 3;
+    public static int width = 115;
+    public static int height = 115;
+    public static int gap = 3;
     private boolean selected = false; //设置是否被选中
     
     public Block(int row, int col, int imageNumber, GamePanel jpanel){
@@ -41,6 +37,7 @@ public class Block{
             g.setColor(Color.RED);
             g.drawRect(x, y, width, height);
         }
+
     } 
     
     public int getRow(){
@@ -53,7 +50,11 @@ public class Block{
 
     public void setImageNumber(int imageNumber) {
         this.imageNumber = imageNumber;
-    }    
+    }  
+    
+    public int getImageNumber(){
+        return this.imageNumber;
+    }
 
     public boolean isSelected(){
         return selected;
@@ -65,10 +66,26 @@ public class Block{
 
 
     public boolean containsPoint(int x, int y) {
-        int startX = this.startX + this.col * (width + gap);
-        int startY = this.startY + this.row * (height + gap);
+        int startX = Block.startX + this.col * (width + gap);
+        int startY = Block.startY + this.row * (height + gap);
         Rectangle blockBounds = new Rectangle(startX, startY, width, height);
         return blockBounds.contains(x, y);
     }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public void setCol(int col) {
+        this.col = col;
+    }
+
+    public void handleClick(int x, int y) {
+        if (containsPoint(x, y)) {
+            setSelected(!isSelected()); // 切换选中状态
+            gamePanel.repaint(); // 通知面板进行重绘
+        }
+    }
+    
     
 }
