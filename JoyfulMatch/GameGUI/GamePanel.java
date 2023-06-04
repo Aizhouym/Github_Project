@@ -4,33 +4,41 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 import javax.swing.*;
-
 import JoyfulMatch.common.Block;
 import JoyfulMatch.common.ImageInit;
 
 
 public class GamePanel extends JPanel {
     private int[][] imageMatrix;
+    private int[][] beforeImageMatrix;
     private Block[][] blockMatrix;
-    // private Block selectedBlock;
 
     private ImageInit imageInit;
     private Image background;
     private Font headerFont;
     private long startTime;
+    private int beforeScore;
     private int score;
-    Random random = new Random();
+    private Timer timer;
+    private long pausedTime;  // 记录暂停时的时间
+    private boolean isPaused; // 记录当前是否处于暂停状态
+    private boolean isOver ; //记录是否结束状态
+    private boolean isLocked; //锁定panel
 
+    Random random = new Random();
 
     private void init() {
         imageInit = new ImageInit();
         imageInit.init();
-        background = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/background2.jpg").getImage(); 
+        background = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/background6.jpg").getImage(); 
         // 随机生成图像矩阵
         
         imageMatrix = new int[7][10];
+        beforeImageMatrix = new int[7][10];
         blockMatrix = new Block[7][10];
 
         for (int row = 0; row < imageMatrix.length; row++) {
@@ -47,15 +55,114 @@ public class GamePanel extends JPanel {
         //设置时间
         startTime = System.currentTimeMillis();
         // 启动定时器，每秒触发重绘
-        Timer timer = new Timer(1000, e -> {
+        timer = new Timer(1000, e -> {
             repaint();
         });
         timer.start();
 
+        //设置是否结束
+        isOver = false;
+        //设置面板是否锁定
+        isLocked = false;
         //设置得分
         score = 0;
+        beforeScore = 0;
+
     }
 
+    //计时器
+    public void pauseTimer() {
+        timer.stop();
+        pausedTime = System.currentTimeMillis();
+        isPaused = true;
+    }
+    
+    public void resumeTimer() {
+        if (isPaused) {
+            long pauseDuration = System.currentTimeMillis() - pausedTime;
+            startTime += pauseDuration;
+            timer.start();
+            isPaused = false;
+        }
+    }
+
+    public void gameOver(){
+
+        //isOver为 true
+        isOver = true;
+        isLocked = true;
+        timer.stop();
+
+    }
+
+    public int getScore(){
+        return this.score;
+    }
+
+    public void shuffItem(){
+        if (!isOver){
+            int[][] shuffledMatrix = new int[imageMatrix.length][imageMatrix[0].length];
+    
+            // 洗牌算法打乱原始矩阵
+            ArrayList<Integer> numbers = new ArrayList<>();
+            for (int i = 0; i < imageMatrix.length; i++) {
+                for (int j = 0; j < imageMatrix[0].length; j++) {
+                    numbers.add(imageMatrix[i][j]);
+                }
+            }
+            
+            Collections.shuffle(numbers);
+            
+            // 更新imageMatrix为打乱后的矩阵
+            int index = 0;
+            for (int i = 0; i < imageMatrix.length; i++) {
+                for (int j = 0; j < imageMatrix[0].length; j++) {
+                    shuffledMatrix[i][j] = numbers.get(index++);
+                }
+            }
+            
+            // 更新图像矩阵和方块数组
+            imageMatrix = shuffledMatrix;
+            for (int row = 0; row < imageMatrix.length; row++) {
+                for (int col = 0; col < imageMatrix[0].length; col++) {
+                    int num = imageMatrix[row][col];
+                    blockMatrix[row][col].setImageNumber(num);
+                    blockMatrix[row][col].setRow(row);
+                    blockMatrix[row][col].setCol(col);
+                }
+            }
+    
+            checkAndProcessElimination();
+            // 重绘面板
+            repaint();
+        }
+    }//随机打乱对应的panel图片
+
+    public void backItem(){
+        if (!isOver){
+            if (beforeImageMatrix != null) {
+                imageMatrix = Arrays.stream(beforeImageMatrix).map(int[]::clone).toArray(int[][]::new);
+                
+                //恢复score
+                score = beforeScore;
+                // 更新blockMatrix
+                for (int row = 0; row < imageMatrix.length; row++) {
+                    for (int col = 0; col < imageMatrix[0].length; col++) {
+                        int num = imageMatrix[row][col];
+                        blockMatrix[row][col].setImageNumber(num);
+                        blockMatrix[row][col].setRow(row);
+                        blockMatrix[row][col].setCol(col);
+                    }
+                }
+                
+                // 重绘面板
+                repaint();
+            }
+        }
+    }//返回到交换前的状态
+
+
+    //实现初始化不会有三个相同image出现
     private int getRandomImage(int row, int col) {
         int num = random.nextInt(9);
         int countRow = countSameImagesRow(row, num);
@@ -132,13 +239,29 @@ public class GamePanel extends JPanel {
         // 绘制标题文本
         g.setFont(headerFont);
         g.setColor(Color.RED);
-        long currentTime = System.currentTimeMillis();
+        long currentTime = isPaused ? pausedTime : System.currentTimeMillis();
         long elapsedTime = currentTime - startTime;
         String timeText = "时间：" + elapsedTime / 1000 + "秒";
-        String scoreText = "得分: "+ score;
+        String scoreText = "得分: " + score;
         // int textHeight = g.getFontMetrics().getHeight();
-        g.drawString(timeText, 300, startY-8);
-        g.drawString(scoreText, 700, startY-8);
+        g.drawString(timeText, 300, startY - 8);
+        g.drawString(scoreText, 700, startY - 8);
+
+        // 判断时间是否超过120秒
+        if (elapsedTime >= 120000) {
+            gameOver();
+        }
+
+        if(isOver){
+            String over = "  游戏结束  ";
+            g.setFont(new Font("宋体", Font.BOLD, 50));
+            g.drawString(over, 500, 500);
+            String rank = " 请查看排名  ";
+            g.setFont(new Font("宋体", Font.BOLD, 50));
+            g.drawString(rank, 500, 550);
+
+        }
+
 
     }
 
@@ -148,35 +271,43 @@ public class GamePanel extends JPanel {
             private Block selectedBlock = null;
             @Override
             public void mouseClicked(MouseEvent e) {
-                int mouseX = e.getX();
-                int mouseY = e.getY();
-    
-                // 计算被点击的方块在矩阵中的位置
-                int row = (mouseY - Block.startY) / (Block.height +Block.gap);
-                int col = (mouseX - Block.startX) / (Block.width + Block.gap);
-    
-                // 检查点击的方块是否在有效范围内
-                if (row >= 0 && row < imageMatrix.length && col >= 0 && col < imageMatrix[0].length) {
-                    Block clickedBlock = blockMatrix[row][col];
-    
-                    // 如果之前没有选择方块，则选中当前点击的方块
-                    if (selectedBlock == null) {
-                        selectedBlock = clickedBlock;
-                        selectedBlock.setSelected(true);
-                    } else {
-                        // 否则，进行位置交换
-                        swapBlocks(selectedBlock, clickedBlock);
-                        selectedBlock.setSelected(false);
-                        clickedBlock.setSelected(false);
-                        selectedBlock = null;
-                        // processEliminationAndFalling();
+                if(!isLocked){
+                    int mouseX = e.getX();
+                    int mouseY = e.getY();
+        
+                    // 计算被点击的方块在矩阵中的位置
+                    int row = (mouseY - Block.startY) / (Block.height +Block.gap);
+                    int col = (mouseX - Block.startX) / (Block.width + Block.gap);
+        
+                    // 检查点击的方块是否在有效范围内
+                    if (row >= 0 && row < imageMatrix.length && col >= 0 && col < imageMatrix[0].length) {
+                        Block clickedBlock = blockMatrix[row][col];
+        
+                        // 如果之前没有选择方块，则选中当前点击的方块
+                        if (selectedBlock == null) {
+                            selectedBlock = clickedBlock;
+                            selectedBlock.setSelected(true);
+                        } else {
+                            // 否则，进行位置交换
+                            swapBlocks(selectedBlock, clickedBlock);
+                            selectedBlock.setSelected(false);
+                            clickedBlock.setSelected(false);
+                            selectedBlock = null;
+                            // processEliminationAndFalling();
+                        }
                     }
                 }
+                
             }
         });
     }
     
     private void swapBlocks(Block block1, Block block2) {
+        // 交换操作前保存当前状态
+        beforeImageMatrix = Arrays.stream(imageMatrix).map(int[]::clone).toArray(int[][]::new);
+        //记录交换前的分数
+        beforeScore = score;
+
         int row1 = block1.getRow();
         int col1 = block1.getCol();
         int row2 = block2.getRow();

@@ -17,12 +17,12 @@ public class GameCover extends JFrame {
     private ImageIcon image2;
     private ImageIcon image3;
     private ImageIcon image4;
-    private JTextField account;
-    private JPasswordField password;
+    private static JTextField account;
+    private static JPasswordField password;
     private JButton signUp;
     private JButton logIn;
     private ImageIcon icon;
-
+    public static String name;
 
     public GameCover() {
         initalizeComponents();
@@ -71,12 +71,13 @@ public class GameCover extends JFrame {
        
     }
 
+    
     public void setLinstener(){
         String Name = account.getText();
+        name = Name;
         char[] Password_char = password.getPassword();
         String Password = new String(Password_char);
-        // String Password = password.fetPassword().toString(),返回的是char数组默认的字符串，而并非密码中的内容  
-
+        // String Password = password.fetPassword().toString(),返回的是char数组默认的字符串，而并非密码中的内容 
         signUp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {                
@@ -102,6 +103,7 @@ public class GameCover extends JFrame {
                         insertStatement.executeUpdate();
                         // 插入成功的处理逻辑
                         JOptionPane.showMessageDialog(null, "Registration successful", "Registration", JOptionPane.INFORMATION_MESSAGE);
+
                         // SwingUtilities.invokeLater(GameWindow::new);
                     }
                 } catch (SQLException ex) {
@@ -110,7 +112,8 @@ public class GameCover extends JFrame {
                 }
             }
         });
-        logIn.addActionListener(new ActionListener() {
+        
+        logIn.addActionListener(new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent e) {
             try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")) {
@@ -121,11 +124,21 @@ public class GameCover extends JFrame {
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     // 用户名和密码匹配，进行游戏跳转等操作
-                    JOptionPane.showMessageDialog(null, "successful", "Login successful", JOptionPane.INFORMATION_MESSAGE);
-                    dispose(); //关闭当前窗口
 
-                    GameWindow gameWindow = new GameWindow();
-                    gameWindow.setVisible(true);
+                    Object[] options = { "EasyMode", "HardMode" };
+                    int modeSelection = JOptionPane.showOptionDialog(null, "Select the game mode", "Login successful",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+    
+                    dispose(); // 关闭当前窗口
+                    if (modeSelection == 1){
+                        GameWindow gameWindow = new GameWindow();
+                        gameWindow.setVisible(true);
+                    }
+    
+                    // GameWindow gameWindow = new GameWindow();
+
+                    // gameWindow.setGameMode(modeSelection == 0 ? GameMode.EASY : GameMode.HARD); // 根据选择的模式设置游戏模式
+                    // gameWindow.setVisible(true);
                 } else {
                     // 用户名和密码不匹配，弹出警告框
                     JOptionPane.showMessageDialog(null, "Invalid username or password", "Login Failed", JOptionPane.WARNING_MESSAGE);
@@ -137,6 +150,11 @@ public class GameCover extends JFrame {
             }
         });
 
+    }
+
+
+    public void setname(String name){
+        GameCover.name = name;
     }
     
 }
