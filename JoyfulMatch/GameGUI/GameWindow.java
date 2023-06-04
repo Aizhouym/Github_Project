@@ -44,7 +44,7 @@ public class GameWindow extends JFrame {
         music7 = new JMenuItem("<7.谎言>");
 
         shuffItem = new JMenuItem("<1.打乱> ");
-        backItem = new JMenuItem("<2.上一步> ");
+        backItem = new JMenuItem("<2.反悔> ");
 
 
         music1String = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/music/eurpoean/Shape of You.mp3";

@@ -6,5 +6,6 @@ public class GameMain{
         //加载GUI
         GameCover gameCover = new GameCover();
         gameCover.setVisible(true);
+        
     }
 }

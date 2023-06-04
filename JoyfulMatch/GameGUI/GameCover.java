@@ -102,7 +102,17 @@ public class GameCover extends JFrame {
                         insertStatement.setString(2, Password);
                         insertStatement.executeUpdate();
                         // 插入成功的处理逻辑
-                        JOptionPane.showMessageDialog(null, "Registration successful", "Registration", JOptionPane.INFORMATION_MESSAGE);
+                        Object[] options = { "EasyMode", "HardMode" };
+                        int modeSelection = JOptionPane.showOptionDialog(null, "Select the game mode", "signup successful",
+                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+    
+                        dispose(); // 关闭当前窗口
+                        if (modeSelection == 0){
+                            GameWindow gameWindow = new GameWindow();
+                            gameWindow.setVisible(true);
+                        }else{
+                            
+                        }
 
                         // SwingUtilities.invokeLater(GameWindow::new);
                     }
@@ -152,10 +162,6 @@ public class GameCover extends JFrame {
 
     }
 
-
-    public void setname(String name){
-        GameCover.name = name;
-    }
     
 }
 
