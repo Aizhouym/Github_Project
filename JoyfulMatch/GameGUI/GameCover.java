@@ -22,7 +22,6 @@ public class GameCover extends JFrame {
     private JButton signUp;
     private JButton logIn;
     private ImageIcon icon;
-    public static String name;
 
     public GameCover() {
         initalizeComponents();
@@ -74,7 +73,6 @@ public class GameCover extends JFrame {
     
     public void setLinstener(){
         String Name = account.getText();
-        name = Name;
         char[] Password_char = password.getPassword();
         String Password = new String(Password_char);
         // String Password = password.fetPassword().toString(),返回的是char数组默认的字符串，而并非密码中的内容 
@@ -108,7 +106,7 @@ public class GameCover extends JFrame {
     
                         dispose(); // 关闭当前窗口
                         if (modeSelection == 0){
-                            GameWindow gameWindow = new GameWindow();
+                            GameWindow gameWindow = new GameWindow(Name);
                             gameWindow.setVisible(true);
                         }else{
 
@@ -141,10 +139,10 @@ public class GameCover extends JFrame {
     
                     dispose(); // 关闭当前窗口
                     if (modeSelection == 0){
-                        GameWindow gameWindow = new GameWindow();
+                        GameWindow gameWindow = new GameWindow(Name);
                         gameWindow.setVisible(true);
                     }else{
-                        
+
                     }
     
                     // GameWindow gameWindow = new GameWindow();

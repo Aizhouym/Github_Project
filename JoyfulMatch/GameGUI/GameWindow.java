@@ -28,13 +28,14 @@ public class GameWindow extends JFrame {
     ArrayList<RankData> easy_rankingDatas;
     MusicThread musicThread;
     String[][] gameGrid;
+    String name;
 
     private boolean isPaused = false; // 用于跟踪时间是否暂停
 
 
     private void  initalizeComponents(){
         icon = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/icon2.png");
-        gamePanel = new GamePanel();
+        gamePanel = new GamePanel(name);
         menu = new JMenuBar();
         gameMenu = new JMenu("*游戏*");
         rankMenu = new JMenu("*排名*");
@@ -294,14 +295,15 @@ public class GameWindow extends JFrame {
 
 
 
-    public GameWindow() {
+    public GameWindow(String name) {
         // 初始化图像资源
         initalizeComponents();
         createGUI();
+        this.name = name;
         
     }
     public static void main(String[] args) {
-        GameWindow gameWindow= new GameWindow();
+        GameWindow gameWindow= new GameWindow("周英明");
         gameWindow.setVisible(true);
 
     }   

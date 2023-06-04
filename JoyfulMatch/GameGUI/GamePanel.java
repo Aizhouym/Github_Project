@@ -10,9 +10,11 @@ import java.util.Random;
 import javax.swing.*;
 import JoyfulMatch.common.Block;
 import JoyfulMatch.common.ImageInit;
+import java.sql.*;
 
 
 public class GamePanel extends JPanel {
+
     private int[][] imageMatrix;
     private int[][] beforeImageMatrix;
     private Block[][] blockMatrix;
@@ -28,6 +30,7 @@ public class GamePanel extends JPanel {
     private boolean isPaused; // 记录当前是否处于暂停状态
     private boolean isOver ; //记录是否结束状态
     private boolean isLocked; //锁定panel
+    String name;
 
     Random random = new Random();
 
@@ -92,9 +95,16 @@ public class GamePanel extends JPanel {
         isOver = true;
         isLocked = true;
         timer.stop();
-        
-        
 
+        try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")){
+            String query = "INSERT INTO rank_easy (name, score) VALUES (?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, name);
+            preparedStatement.setInt(2, score);
+
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -481,7 +491,8 @@ public class GamePanel extends JPanel {
     
 
     
-    public GamePanel() {
+    public GamePanel(String name) {
+        this.name = name;
         init();
         setMouseListener();
     }

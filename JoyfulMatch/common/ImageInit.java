@@ -9,8 +9,7 @@ public class ImageInit {
     //imagePath
     public static String imagePath = "E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/title_";
     //init
-    public static void init(){
-        
+    public void init(){
         for(int i = 0; i < 9; i++){
             String image = imagePath + i + ".png";
             ImageIcon imageIcon = new ImageIcon(image);
