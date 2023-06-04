@@ -5,6 +5,16 @@ import javax.swing.*;
 import JoyfulMatch.MusicPlayer.BackgroundMusic;
 import JoyfulMatch.MusicPlayer.MusicThread;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
+import JoyfulMatch.common.RankData;
 
 
 public class GameWindow extends JFrame {
@@ -12,9 +22,10 @@ public class GameWindow extends JFrame {
     GamePanel gamePanel;
     private JMenuBar menu;
     private JMenu gameMenu, rankMenu, musicMenu, chineseMusicMenu, japaneseKoreanMusicMenu, westernMusicMenu, toolMenu;
-    private JMenuItem pasueItem, exitItem, music1, music2, music3, music4, music5, music6, music7, shuffItem, backItem;
+    private JMenuItem pasueItem, exitItem, rank_easyItem, rank_hardItem, music1, music2, music3, music4, music5, music6, music7, shuffItem, backItem;
     private String music1String, music2String, music3String,music4String,music5String,music6String,music7String;
     private BackgroundMusic musicPlayer;
+    ArrayList<RankData> easy_rankingDatas;
     MusicThread musicThread;
     String[][] gameGrid;
 
@@ -31,6 +42,8 @@ public class GameWindow extends JFrame {
         toolMenu = new JMenu("*道具*");
         pasueItem = new JMenuItem(" <暂停> ");
         exitItem = new JMenuItem(" <结束> ");
+        rank_easyItem = new JMenuItem("<easy_mode ranking>");
+        rank_hardItem = new JMenuItem("<hard_mode ranking>");
         chineseMusicMenu = new JMenu("*华语*");
         japaneseKoreanMusicMenu = new JMenu("*日韩*");
         westernMusicMenu = new JMenu("*欧美*");
@@ -59,6 +72,8 @@ public class GameWindow extends JFrame {
         musicPlayer = new BackgroundMusic();
         musicThread = new MusicThread();
         musicThread.setBackgroundMusic(musicPlayer);
+
+        easy_rankingDatas = new ArrayList<>();
     }
     
     private void createGUI(){
@@ -77,8 +92,8 @@ public class GameWindow extends JFrame {
             japaneseKoreanMusicMenu.setFont(menuFont);
             westernMusicMenu.setFont(menuFont);
             toolMenu.setFont(menuFont);
+           
             pasueItem.setFont(menuFont);
-            
             pasueItem.addActionListener(e -> {
                 if (isPaused) {
                     // 恢复时间
@@ -97,6 +112,17 @@ public class GameWindow extends JFrame {
                 System.exit(0); //设置退出
             });
 
+            //rank设置
+            rank_easyItem.setFont(menuFont2);
+            rank_easyItem.addActionListener(e -> {
+                fetchRankingData(easy_rankingDatas);
+                showRankingDialog(easy_rankingDatas);
+            });
+
+            rank_hardItem.setFont(menuFont2);
+            rank_hardItem.addActionListener(e -> {
+
+            });
             //音乐切换
             music1.setFont(menuFont2);
             music2.setFont(menuFont2);
@@ -162,6 +188,7 @@ public class GameWindow extends JFrame {
                 musicThread7.start();
             });
 
+            //道具功能定义
             shuffItem.setFont(menuFont);
             shuffItem.addActionListener(e ->{
                 gamePanel.shuffItem();
@@ -172,11 +199,14 @@ public class GameWindow extends JFrame {
                 gamePanel.backItem();
 
             });
+            
 
 
 
             gameMenu.add(pasueItem);
             gameMenu.add(exitItem);
+            rankMenu.add(rank_easyItem);
+            rankMenu.add(rank_hardItem);
             chineseMusicMenu.add(music4);
             chineseMusicMenu.add(music5);
             chineseMusicMenu.add(music6);
@@ -212,7 +242,57 @@ public class GameWindow extends JFrame {
             
             
         });        
-    }    
+    }
+    private void fetchRankingData(ArrayList<RankData> rankingData) {
+        try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")) {
+            //建立string 
+            String query = "SELECT Name, Score FROM rank_easy ORDER BY Score DESC";
+            // 建立执行query
+            // Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            // 获取对应的数据
+            ResultSet resultSet = statement.executeQuery();
+
+            // Process the query results and populate the rankingData list
+            while (resultSet.next()) {
+                String name = resultSet.getString("Name");
+                int score = resultSet.getInt("Score");
+                RankData rankData = new RankData(name, score);
+                rankingData.add(rankData);
+            }
+    
+            // Close the resources
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+    }
+    
+    private void showRankingDialog(ArrayList<RankData> rankingData) {
+        StringBuilder message = new StringBuilder();
+        int rank = 1;
+        Set<String> addedNames = new HashSet<>();
+    
+        // 遍历rankingData
+        for (RankData rankData : rankingData) {
+            if (!addedNames.contains(rankData.getName())) {
+                message.append(rank).append(". ").append(rankData.getName()).append(": ").append(rankData.getScore()).append("\n");
+                addedNames.add(rankData.getName());
+                rank++;
+            }
+        }
+    
+        JOptionPane.showMessageDialog(this, message.toString(), "Ranking", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+
+    
+
+
 
     public GameWindow() {
         // 初始化图像资源

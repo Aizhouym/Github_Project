@@ -92,9 +92,13 @@ public class GamePanel extends JPanel {
         isOver = true;
         isLocked = true;
         timer.stop();
+        
+        
+
 
     }
 
+    
     public int getScore(){
         return this.score;
     }
