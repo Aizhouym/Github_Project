@@ -130,7 +130,7 @@ public class GameCover extends JFrame {
                             JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
     
                     dispose(); // 关闭当前窗口
-                    if (modeSelection == 1){
+                    if (modeSelection == 0){
                         GameWindow gameWindow = new GameWindow();
                         gameWindow.setVisible(true);
                     }
