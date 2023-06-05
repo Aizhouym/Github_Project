@@ -5,11 +5,6 @@ import javax.swing.*;
 import JoyfulMatch.MusicPlayer.BackgroundMusic;
 import JoyfulMatch.MusicPlayer.MusicThread;
 import java.awt.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +23,7 @@ public class GameWindow extends JFrame {
     ArrayList<RankData> easy_rankingDatas;
     MusicThread musicThread;
     String[][] gameGrid;
-    String name;
+    public static String name;
 
     private boolean isPaused = false; // 用于跟踪时间是否暂停
 
@@ -117,7 +112,7 @@ public class GameWindow extends JFrame {
             //rank设置
             rank_easyItem.setFont(menuFont2);
             rank_easyItem.addActionListener(e -> {
-                fetchRankingData(easy_rankingDatas);
+                easy_rankingDatas = gamePanel.rankingData;
                 showRankingDialog(easy_rankingDatas);
             });
 
@@ -245,35 +240,7 @@ public class GameWindow extends JFrame {
             
         });        
     }
-    private void fetchRankingData(ArrayList<RankData> rankingData) {
-        try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")) {
-            //建立string 
-            String query = "SELECT Name, Score FROM rank_easy ORDER BY Score DESC";
-            // 建立执行query
-            // Statement statement = connection.createStatement();
-            PreparedStatement statement = connection.prepareStatement(query);
 
-            // 获取对应的数据
-            ResultSet resultSet = statement.executeQuery();
-
-            // Process the query results and populate the rankingData list
-            while (resultSet.next()) {
-                String name = resultSet.getString("Name");
-                int score = resultSet.getInt("Score");
-                RankData rankData = new RankData(name, score);
-                rankingData.add(rankData);
-            }
-    
-            // Close the resources
-            resultSet.close();
-            statement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    
-    }
-    
     private void showRankingDialog(ArrayList<RankData> rankingData) {
         StringBuilder message = new StringBuilder();
         int rank = 1;
@@ -292,19 +259,16 @@ public class GameWindow extends JFrame {
     }
 
 
-    
-
-
-
     public GameWindow(String name) {
         // 初始化图像资源
+        GameWindow.name = name;
         initalizeComponents();
         createGUI();
-        this.name = name;
-        System.out.println(this.name);
+        System.out.println(gamePanel.getName());
+         
     }
     public static void main(String[] args) {
-        GameWindow gameWindow= new GameWindow("周英明");
+        GameWindow gameWindow= new GameWindow("李白");
         gameWindow.setVisible(true);
 
     }   

@@ -10,6 +10,8 @@ import java.util.Random;
 import javax.swing.*;
 import JoyfulMatch.common.Block;
 import JoyfulMatch.common.ImageInit;
+import JoyfulMatch.common.RankData;
+
 import java.sql.*;
 
 
@@ -30,11 +32,12 @@ public class GamePanel extends JPanel {
     private boolean isPaused; // 记录当前是否处于暂停状态
     private boolean isOver ; //记录是否结束状态
     private boolean isLocked; //锁定panel
-    String name;
+    public String name;
+    public ArrayList<RankData> rankingData;
 
     Random random = new Random();
 
-    private void init() {
+    protected void init() {
         imageInit = new ImageInit();
         imageInit.init();
         background = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/background6.jpg").getImage(); 
@@ -49,6 +52,7 @@ public class GamePanel extends JPanel {
                 int num = getRandomImage(row, col);
                 imageMatrix[row][col] = num;
                 blockMatrix[row][col] = new Block(row, col, num, this);
+            
             }
         }
 
@@ -71,6 +75,9 @@ public class GamePanel extends JPanel {
         score = 0;
         beforeScore = 0;
 
+        this.name = GameWindow.name;
+
+        rankingData = new ArrayList<>();
     }
 
     //计时器
@@ -91,16 +98,13 @@ public class GamePanel extends JPanel {
 
     public void gameOver(){
 
-        //isOver为 true
-        isOver = true;
-        isLocked = true;
-        timer.stop();
-
         try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")){
-            String query = "INSERT INTO rank_easy (name, score) VALUES (?, ?)";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, name);
-            preparedStatement.setInt(2, score);
+            
+            String insertQuery = "INSERT INTO rank_easy (Name, Score) VALUES (?, ?)";
+            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+            insertStatement.setString(1, name);
+            insertStatement.setInt(2, score);
+            insertStatement.executeUpdate();
 
         }catch (SQLException e) {
             e.printStackTrace();
@@ -108,7 +112,14 @@ public class GamePanel extends JPanel {
 
     }
 
-    
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
     public int getScore(){
         return this.score;
     }
@@ -177,7 +188,7 @@ public class GamePanel extends JPanel {
 
 
     //实现初始化不会有三个相同image出现
-    private int getRandomImage(int row, int col) {
+    protected int getRandomImage(int row, int col) {
         int num = random.nextInt(9);
         int countRow = countSameImagesRow(row, num);
         int countCol = countSameImagesCol(col, num);
@@ -191,7 +202,7 @@ public class GamePanel extends JPanel {
         return num;
     }
     
-    private int countSameImagesRow(int row, int num) {
+    protected int countSameImagesRow(int row, int num) {
         int count = 0;
         
         for (int col = 0; col < imageMatrix[0].length; col++) {
@@ -203,7 +214,7 @@ public class GamePanel extends JPanel {
         return count;
     }
     
-    private int countSameImagesCol(int col, int num) {
+    protected int countSameImagesCol(int col, int num) {
         int count = 0;
         
         for (int row = 0; row < imageMatrix.length; row++) {
@@ -263,7 +274,12 @@ public class GamePanel extends JPanel {
 
         // 判断时间是否超过120秒
         if (elapsedTime >= 120000) {
-            gameOver();
+             //isOver为 true
+            isOver = true;
+            isLocked = true;
+            timer.stop();
+            
+
         }
 
         if(isOver){
@@ -273,7 +289,8 @@ public class GamePanel extends JPanel {
             String rank = " 请查看排名  ";
             g.setFont(new Font("宋体", Font.BOLD, 50));
             g.drawString(rank, 500, 550);
-
+            gameOver();
+            rankingData = fetchRankingData();
         }
 
 
@@ -316,7 +333,7 @@ public class GamePanel extends JPanel {
         });
     }
     
-    private void swapBlocks(Block block1, Block block2) {
+    protected void swapBlocks(Block block1, Block block2) {
         // 交换操作前保存当前状态
         beforeImageMatrix = Arrays.stream(imageMatrix).map(int[]::clone).toArray(int[][]::new);
         //记录交换前的分数
@@ -361,7 +378,7 @@ public class GamePanel extends JPanel {
         }
     }
     
-    private void checkAndProcessElimination(){
+    protected void checkAndProcessElimination(){
         ArrayList<Block> horizontalMatches = findHorizontalMatches();
         ArrayList<Block> verticalMatches = findVerticalMatches();
 
@@ -397,7 +414,7 @@ public class GamePanel extends JPanel {
         }
     }//进行检查
 
-    private ArrayList<Block> findHorizontalMatches() {
+    protected ArrayList<Block> findHorizontalMatches() {
         ArrayList<Block> matches = new ArrayList<>();
     
         for (int row = 0; row < imageMatrix.length; row++) {
@@ -429,7 +446,7 @@ public class GamePanel extends JPanel {
         return matches;
     }//水平记录
     
-    private ArrayList<Block> findVerticalMatches() {
+    protected ArrayList<Block> findVerticalMatches() {
         ArrayList<Block> matches = new ArrayList<>();
     
         for (int col = 0; col < imageMatrix[0].length; col++) {
@@ -461,7 +478,7 @@ public class GamePanel extends JPanel {
         return matches;
     }//垂直记录
 
-    private void fillEmptySpacesAndDropBlocks() {
+    protected void fillEmptySpacesAndDropBlocks() {
         for (int col = 0; col < imageMatrix[0].length; col++) {
             int emptySpaces = 0;
     
@@ -488,12 +505,38 @@ public class GamePanel extends JPanel {
         // 检查并处理消除情况
         checkAndProcessElimination();
     }
-    
-    public void setName(String name){
-        this.name = name;
-    }
 
+    protected ArrayList<RankData> fetchRankingData() {
+        ArrayList<RankData> rankingData = new ArrayList<>();
+        try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")) {
+            //建立string 
+            String query = "SELECT Name, Score FROM rank_easy ORDER BY Score DESC";
+            // 建立执行query
+            // Statement statement = connection.createStatement();
+            PreparedStatement statement = connection.prepareStatement(query);
+
+            // 获取对应的数据
+            ResultSet resultSet = statement.executeQuery();
+
+            // Process the query results and populate the rankingData list
+            while (resultSet.next()) {
+                String name = resultSet.getString("Name");
+                int score = resultSet.getInt("Score");
+                RankData rankData = new RankData(name, score);
+                rankingData.add(rankData);
+            }
     
+            // Close the resources
+            resultSet.close();
+            statement.close();
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return rankingData;
+    }
+        
     public GamePanel() {
         init();
         setMouseListener();
