@@ -35,7 +35,8 @@ public class GameWindow extends JFrame {
 
     private void  initalizeComponents(){
         icon = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/icon2.png");
-        gamePanel = new GamePanel(name);
+
+        gamePanel = new GamePanel();
         menu = new JMenuBar();
         gameMenu = new JMenu("*游戏*");
         rankMenu = new JMenu("*排名*");
@@ -300,7 +301,7 @@ public class GameWindow extends JFrame {
         initalizeComponents();
         createGUI();
         this.name = name;
-        
+        System.out.println(this.name);
     }
     public static void main(String[] args) {
         GameWindow gameWindow= new GameWindow("周英明");

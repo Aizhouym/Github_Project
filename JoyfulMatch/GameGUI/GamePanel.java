@@ -24,7 +24,7 @@ public class GamePanel extends JPanel {
     private Font headerFont;
     private long startTime;
     private int beforeScore;
-    private int score;
+    public  int score;
     private Timer timer;
     private long pausedTime;  // 记录暂停时的时间
     private boolean isPaused; // 记录当前是否处于暂停状态
@@ -489,10 +489,12 @@ public class GamePanel extends JPanel {
         checkAndProcessElimination();
     }
     
+    public void setName(String name){
+        this.name = name;
+    }
 
     
-    public GamePanel(String name) {
-        this.name = name;
+    public GamePanel() {
         init();
         setMouseListener();
     }

@@ -109,7 +109,7 @@ public class GameCover extends JFrame {
                             GameWindow gameWindow = new GameWindow(Name);
                             gameWindow.setVisible(true);
                         }else{
-
+                            
                         }
 
                         // SwingUtilities.invokeLater(GameWindow::new);
