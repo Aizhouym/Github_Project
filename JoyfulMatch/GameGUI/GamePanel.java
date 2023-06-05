@@ -34,6 +34,7 @@ public class GamePanel extends JPanel {
     private boolean isLocked; //锁定panel
     public String name;
     public ArrayList<RankData> rankingData;
+    public boolean HardMode = GameWindow.isHard;
 
     Random random = new Random();
 
@@ -80,6 +81,10 @@ public class GamePanel extends JPanel {
         rankingData = new ArrayList<>();
     }
 
+    public void setHardMode(boolean isHard){
+        this.HardMode = isHard;
+    }
+
     //计时器
     public void pauseTimer() {
         timer.stop();
@@ -98,17 +103,35 @@ public class GamePanel extends JPanel {
 
     public void gameOver(){
 
-        try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")){
-            
-            String insertQuery = "INSERT INTO rank_easy (Name, Score) VALUES (?, ?)";
-            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
-            insertStatement.setString(1, name);
-            insertStatement.setInt(2, score);
-            insertStatement.executeUpdate();
+        if(HardMode){
 
-        }catch (SQLException e) {
-            e.printStackTrace();
+            try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")){
+                String insertQuery = "INSERT INTO rank_hard (Name, Score) VALUES (?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                insertStatement.setString(1, GameWindow.name);
+                insertStatement.setInt(2, score);
+                insertStatement.executeUpdate();
+            }catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }else{
+
+            try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")){
+                String insertQuery = "INSERT INTO rank_easy (Name, Score) VALUES (?, ?)";
+                PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+                insertStatement.setString(1, GameWindow.name);
+                insertStatement.setInt(2, score);
+                insertStatement.executeUpdate();
+
+            }catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
         }
+
+
 
     }
 
@@ -272,14 +295,15 @@ public class GamePanel extends JPanel {
         g.drawString(timeText, 300, startY - 8);
         g.drawString(scoreText, 700, startY - 8);
 
-        // 判断时间是否超过120秒
-        if (elapsedTime >= 120000) {
-             //isOver为 true
-            isOver = true;
-            isLocked = true;
-            timer.stop();
-            
 
+        if(!HardMode){
+            // 判断时间是否超过120秒
+            if (elapsedTime >= 120000) {
+                //isOver为 true
+                isOver = true;
+                isLocked = true;
+                timer.stop();
+            }
         }
 
         if(isOver){
@@ -292,7 +316,6 @@ public class GamePanel extends JPanel {
             gameOver();
             rankingData = fetchRankingData();
         }
-
 
     }
 
@@ -508,9 +531,17 @@ public class GamePanel extends JPanel {
 
     protected ArrayList<RankData> fetchRankingData() {
         ArrayList<RankData> rankingData = new ArrayList<>();
+        String easy_mode = "SELECT Name, Score FROM rank_easy ORDER BY Score DESC";
+        String hard_mode = "SELECT Name, Score FROM rank_hard ORDER BY Score DESC";
         try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/joyful_match?serverTimezone=Asia/Shanghai", "root", "12345678")) {
             //建立string 
-            String query = "SELECT Name, Score FROM rank_easy ORDER BY Score DESC";
+            String query;
+            if(HardMode){
+                query = hard_mode;
+            }else{
+                query = easy_mode;
+            }
+
             // 建立执行query
             // Statement statement = connection.createStatement();
             PreparedStatement statement = connection.prepareStatement(query);

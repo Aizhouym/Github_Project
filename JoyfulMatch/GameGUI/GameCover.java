@@ -22,12 +22,16 @@ public class GameCover extends JFrame {
     private JButton signUp;
     private JButton logIn;
     private ImageIcon icon;
+    GameWindow gameWindow;
+
+
 
     public GameCover() {
         initalizeComponents();
         createGUI();
         setLinstener();
     }
+
     //initalize
     private void initalizeComponents() {
         image1 = new ImageIcon("E:/Github_Project/JoyfulMatch/Utilities/background4.jpg");
@@ -67,6 +71,7 @@ public class GameCover extends JFrame {
         add(signUp);
         worning.setBounds(1050,875,200,200);
         add(worning);
+        
        
     }
 
@@ -105,12 +110,10 @@ public class GameCover extends JFrame {
                                 JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
     
                         dispose(); // 关闭当前窗口
-                        if (modeSelection == 0){
-                            GameWindow gameWindow = new GameWindow(Name);
-                            gameWindow.setVisible(true);
-                        }else{
-                            
-                        }
+
+                        
+                        gameWindow = new GameWindow(account.getText(), modeSelection);
+                        gameWindow.setVisible(true);
 
                         // SwingUtilities.invokeLater(GameWindow::new);
                     }
@@ -129,6 +132,7 @@ public class GameCover extends JFrame {
                 PreparedStatement statement = connection.prepareStatement(query);
                 statement.setString(1, Name);
                 statement.setString(2, Password);
+
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                     // 用户名和密码匹配，进行游戏跳转等操作
@@ -138,12 +142,9 @@ public class GameCover extends JFrame {
                             JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
     
                     dispose(); // 关闭当前窗口
-                    if (modeSelection == 0){
-                        GameWindow gameWindow = new GameWindow(Name);
-                        gameWindow.setVisible(true);
-                    }else{
-
-                    }
+                    
+                    gameWindow = new GameWindow(account.getText(), modeSelection);
+                    gameWindow.setVisible(true);
     
                     // GameWindow gameWindow = new GameWindow();
 

@@ -20,13 +20,12 @@ public class GameWindow extends JFrame {
     private JMenuItem pasueItem, exitItem, rank_easyItem, rank_hardItem, music1, music2, music3, music4, music5, music6, music7, shuffItem, backItem;
     private String music1String, music2String, music3String,music4String,music5String,music6String,music7String;
     private BackgroundMusic musicPlayer;
-    ArrayList<RankData> easy_rankingDatas;
+    ArrayList<RankData> easy_rankingDatas, hard_rankingDatas;
     MusicThread musicThread;
     String[][] gameGrid;
     public static String name;
-
     private boolean isPaused = false; // 用于跟踪时间是否暂停
-
+    public static boolean isHard = false; //默认为easy
 
     private void  initalizeComponents(){
         icon = new ImageIcon("E:/Github_JoyfulMatch/Github_Project/JoyfulMatch/Utilities/icon2.png");
@@ -71,6 +70,7 @@ public class GameWindow extends JFrame {
         musicThread.setBackgroundMusic(musicPlayer);
 
         easy_rankingDatas = new ArrayList<>();
+        hard_rankingDatas = new ArrayList<>();
     }
     
     private void createGUI(){
@@ -106,7 +106,13 @@ public class GameWindow extends JFrame {
 
             exitItem.setFont(menuFont);
             exitItem.addActionListener(e -> {
-                System.exit(0); //设置退出
+                if(!isHard){
+                    System.exit(0); //设置退出
+                }else{
+                    gamePanel.gameOver();
+                    System.exit(0);
+                }
+                
             });
 
             //rank设置
@@ -119,6 +125,8 @@ public class GameWindow extends JFrame {
             rank_hardItem.setFont(menuFont2);
             rank_hardItem.addActionListener(e -> {
 
+                hard_rankingDatas = gamePanel.fetchRankingData();
+                showRankingDialog(hard_rankingDatas);
             });
             //音乐切换
             music1.setFont(menuFont2);
@@ -259,18 +267,21 @@ public class GameWindow extends JFrame {
     }
 
 
-    public GameWindow(String name) {
+    public GameWindow(String name, int isHard) {
         // 初始化图像资源
         GameWindow.name = name;
+        
+        if(isHard == 1){
+            GameWindow.isHard = true;
+        }
+
+        System.out.println(GameWindow.name);
         initalizeComponents();
         createGUI();
-        System.out.println(gamePanel.getName());
-         
+
     }
     public static void main(String[] args) {
-        GameWindow gameWindow= new GameWindow("李白");
-        gameWindow.setVisible(true);
-
+        
     }   
 
 
