@@ -280,9 +280,6 @@ public class GameWindow extends JFrame {
         createGUI();
 
     }
-    public static void main(String[] args) {
-        
-    }   
 
 
 }
